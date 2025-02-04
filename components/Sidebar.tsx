@@ -26,8 +26,10 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
   const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
-    fetchChatItems()
-  }, [])
+    if (currentUser) {
+      fetchChatItems()
+    }
+  }, [currentUser])
 
   async function fetchChatItems() {
     if (!currentUser) return
@@ -50,6 +52,18 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
     }
 
     // Fetch group chats
+    const { data: groupMemberships, error: groupMembershipsError } = await supabase
+      .from("group_members")
+      .select("group_id")
+      .eq("user_id", currentUser.id)
+
+    if (groupMembershipsError) {
+      console.error("Error fetching group memberships:", groupMembershipsError)
+      return
+    }
+
+    const groupIds = groupMemberships.map((membership) => membership.group_id)
+
     const { data: groupChats, error: groupChatsError } = await supabase
       .from("chats")
       .select(`
@@ -59,7 +73,7 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
         groups!chats_group_id_fkey (name, avatar_url)
       `)
       .eq("type", "group")
-      .in("group_id", supabase.from("group_members").select("group_id").eq("user_id", currentUser.id))
+      .in("group_id", groupIds)
 
     if (groupChatsError) {
       console.error("Error fetching group chats:", groupChatsError)
@@ -96,7 +110,7 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
 
       const { count } = await supabase
         .from("messages")
-        .select("id", { count: "exact" })
+        .select("id", { count: "exact", head: true })
         .eq("chat_id", chat.id)
         .not("message_read_status.user_id", "eq", currentUser.id)
 
