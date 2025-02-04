@@ -70,7 +70,7 @@ export default function ChatArea({ currentUser, activeChat }: ChatAreaProps) {
         .eq("id", activeChat.id)
         .single()
       if (error) console.log("error", error)
-      else setChatInfo(data)
+      else setChatInfo({ name: data.full_name, avatar_url: data.avatar_url })
     } else {
       const { data, error } = await supabase.from("groups").select("name, avatar_url").eq("id", activeChat.id).single()
       if (error) console.log("error", error)
