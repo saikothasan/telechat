@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, type React } from "react"
+import { useState, useEffect } from "react"
+import type { FormEvent } from "react"
 import { createClient } from "@supabase/supabase-js"
 import { Auth } from "@supabase/auth-ui-react"
 import { ThemeSupa } from "@supabase/auth-ui-shared"
@@ -48,7 +49,7 @@ export default function ChatComponent() {
       .subscribe()
   }
 
-  async function handleSendMessage(e: React.FormEvent) {
+  async function handleSendMessage(e: FormEvent) {
     e.preventDefault()
     if (!newMessage.trim()) return
 
