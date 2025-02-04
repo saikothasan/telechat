@@ -41,7 +41,7 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
         id,
         type,
         user_id,
-        profiles!chats_user_id_fkey (full_name, avatar_url)
+        profiles:profiles!chats_user_id_fkey (full_name, avatar_url)
       `)
       .eq("type", "user")
       .or(`user_id.eq.${currentUser.id},messages.sender_id.eq.${currentUser.id}`)
@@ -85,8 +85,8 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
       ...userChats.map((chat) => ({
         id: chat.id,
         type: chat.type as "user" | "group",
-        name: chat.profiles.full_name,
-        avatar_url: chat.profiles.avatar_url,
+        name: chat.profiles?.[0]?.full_name || "Unknown User",
+        avatar_url: chat.profiles?.[0]?.avatar_url || null,
       })),
       ...groupChats.map((chat) => ({
         id: chat.id,
