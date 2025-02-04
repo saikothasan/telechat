@@ -70,7 +70,7 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
         id,
         type,
         group_id,
-        groups!chats_group_id_fkey (name, avatar_url)
+        groups:groups!chats_group_id_fkey (name, avatar_url)
       `)
       .eq("type", "group")
       .in("group_id", groupIds)
@@ -91,8 +91,8 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
       ...groupChats.map((chat) => ({
         id: chat.id,
         type: chat.type as "user" | "group",
-        name: chat.groups.name,
-        avatar_url: chat.groups.avatar_url,
+        name: chat.groups?.[0]?.name || "Unknown Group",
+        avatar_url: chat.groups?.[0]?.avatar_url || null,
       })),
     ]
 
