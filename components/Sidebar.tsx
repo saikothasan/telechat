@@ -15,7 +15,7 @@ interface SidebarProps {
 interface ChatItem {
   id: string
   type: "user" | "group"
-  name: string
+  name: string | null
   avatar_url: string | null
   last_message?: string
   unread_count?: number
@@ -120,7 +120,9 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
     setChatItems(formattedChats)
   }
 
-  const filteredChatItems = chatItems.filter((item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredChatItems = chatItems.filter(
+    (item) => item.name?.toLowerCase().includes(searchTerm.toLowerCase()) || false,
+  )
 
   return (
     <div className="w-1/4 bg-gray-800 text-white flex flex-col">
@@ -144,14 +146,14 @@ export default function Sidebar({ currentUser, setActiveChat, setShowSettings, s
             >
               <img
                 src={item.avatar_url || "/placeholder.svg?height=40&width=40"}
-                alt={item.name}
+                alt={item.name || "Unknown"}
                 className="w-10 h-10 rounded-full mr-3"
               />
               <div className="flex-1">
-                <p className="font-semibold">{item.name}</p>
+                <p className="font-semibold">{item.name || "Unknown"}</p>
                 <p className="text-sm text-gray-400">{item.last_message || "No messages yet"}</p>
               </div>
-              {item.unread_count > 0 && (
+              {(item.unread_count ?? 0) > 0 && (
                 <span className="bg-blue-500 text-white rounded-full px-2 py-1 text-xs">{item.unread_count}</span>
               )}
             </li>
